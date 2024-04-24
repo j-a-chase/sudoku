@@ -9,7 +9,15 @@
 ################################################################################
 
 class Puzzle:
-    pass
+    def __init__(self) -> None:
+        '''
+        Constructor
+
+        Parameters: None
+
+        Returns: None
+        '''
+        self.board = None
 
 if __name__ == '__main__':
     assert False, 'This is a class file. Import its contents into another file.'
