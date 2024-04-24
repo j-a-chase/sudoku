@@ -111,7 +111,7 @@ class Engine:
 
         # grid lines
         for i in range(8):
-            print((i+1) * (GRID_SQAURE_SIZE // 9) + OFFSET)
+            # we need a thick line every third line in the eight we're drawing
             line = THICK_GRID_LINE if (i+1) % 3 == 0 else THIN_GRID_LINE
             pygame.draw.line(self.window, BLACK,
                              ((i+1) * (GRID_SQAURE_SIZE // 9) + OFFSET, OFFSET),
