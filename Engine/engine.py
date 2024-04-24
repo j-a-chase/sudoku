@@ -10,7 +10,8 @@
 
 # imports
 import pygame
-from colors import *
+from pygame import display
+from .colors import *
 
 # engine class global constants
 WINDOW_WIDTH = 800
@@ -41,8 +42,9 @@ class Engine:
         pygame.init()
 
         # initialize window
-        self.window = pygame.display.set_mode([WINDOW_WIDTH, WINDOW_HEIGHT])
+        self.window = display.set_mode([WINDOW_WIDTH, WINDOW_HEIGHT])
         self.window.fill(WHITE)
+        display.flip()
 
 if __name__ == '__main__':
     assert False, 'This is a class file. Import its contents into another file.'
