@@ -11,7 +11,7 @@
 # imports
 from Engine.engine import Engine
 
-def main() -> None: pass
+def main() -> None: Engine()
 
 if __name__ == '__main__':
     main()
