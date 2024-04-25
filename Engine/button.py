@@ -14,7 +14,7 @@ from typing import Tuple
 
 class Button:
     def __init__(self, x: int, y: int, text: str, font: pygame.font.Font,
-                 color: Tuple[int, int, int], scale: float=1.0,
+                 text_color: Tuple[int, int, int], scale: float=1.0,
                  padding: int=0) -> None:
         '''
         Constructor
@@ -27,7 +27,8 @@ class Button:
             - text: a string indicating the text to be rendered on the button
             - font: a pygame.Font object that indicates what font to render the
                     button text in
-            - color: a tuple containing integer RGB values for a color
+            - text_color: a tuple containing integer RGB values for the color of
+                          the text
             - scale: a float indicating a scale for the button, default 1.0
             - padding: an integer indicating the number of pixels to pad the
                        button in each direction
@@ -35,7 +36,7 @@ class Button:
         Returns: None
         '''
         # render provided text as an image
-        image = font.render(text, True, color)
+        image = font.render(text, True, text_color)
 
         # scale the image appropriately
         self.img = pygame.transform.scale(image,
@@ -43,7 +44,7 @@ class Button:
                                            int(image.get_height() * scale)))
         
         # render image in a rectangle in a given position
-        self.rect = self.img.get_rect(topleft=(x, y))
+        self.rect = self.img.get_rect(midtop=(x, y))
 
         # hold clicked state for the button
         self.clicked = False
