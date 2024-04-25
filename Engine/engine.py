@@ -59,7 +59,9 @@ class Engine:
         self.paused = None
 
         # menu buttons
+        self.menu_resume = None
         self.menu_controls = None
+        self.menu_quit = None
 
         # run setup
         self.__setup()
@@ -85,17 +87,18 @@ class Engine:
 
         # initialize window
         self.window = display.set_mode([WINDOW_WIDTH, WINDOW_HEIGHT])
-        self.window.fill(WHITE)
-
-        # set window caption
         display.set_caption("Sudoku")
 
         # initialize game variables
         self.paused = False
 
         # create menu button instances
-        self.menu_controls = Button(GRID_SQAURE_SIZE // 2, OFFSET, "CONTROLS",
+        self.menu_resume = Button(WINDOW_WIDTH // 2, OFFSET, "RESUME",
+                                  self.tooltips_font, BLACK, 1, 25)
+        self.menu_controls = Button(WINDOW_WIDTH // 2, OFFSET * 2, "CONTROLS",
                                     self.tooltips_font, BLACK, 1, 25)
+        self.menu_quit = Button(WINDOW_WIDTH // 2, OFFSET * 3, "QUIT",
+                                self.tooltips_font, BLACK, 1, 25)
 
     def __draw_game(self) -> None:
         '''
@@ -105,6 +108,9 @@ class Engine:
 
         Returns: None
         '''
+        # clear window screen
+        self.window.fill(WHITE)
+
         # draw game grid and cell values
         self.__draw_grid()
 
@@ -217,17 +223,23 @@ class Engine:
 
         Returns: None
         '''
-        # draw game elements
-        self.__draw_game()
-
         # run game
         run = True
         while run:
-            # handle events while paused
-            if self.paused:
+            # draw game if unpaused
+            if not self.paused:
+                self.__draw_game()
+            # otherwise handle paused events
+            else:
                 self.window.fill(FAINT_GRAY)
-                self.menu_controls.draw(self.window, WHITE, BLACK)
+                if self.menu_resume.draw(self.window, WHITE, BLACK):
+                    self.paused = False
+                if self.menu_controls.draw(self.window, WHITE, BLACK):
+                    pass
+                if self.menu_quit.draw(self.window, WHITE, BLACK):
+                    run = False
                 display.flip()
+            
             for event in pygame.event.get():
                 # handle keypresses
                 if event.type == pygame.KEYDOWN:
@@ -237,7 +249,10 @@ class Engine:
 
                     # check for menu option
                     elif event.key == pygame.K_SPACE:
-                        self.paused = True
+                        if not self.paused:
+                            self.paused = True
+                        else:
+                            self.paused = False
 
                 # handle if user clicks the topright 'X'
                 elif event.type == pygame.QUIT:
