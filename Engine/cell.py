@@ -23,6 +23,17 @@ class Cell:
 
         self.set_val(val)
 
+    def __str__(self) -> str:
+        '''
+        Determines how the object is represented as a string.
+
+        Parameters: None
+
+        Returns:
+            - a string representation of the object
+        '''
+        return f'Cell<val: {self.get_val()}'
+
     def get_val(self) -> int:
         '''
         Getter for private attribute {_val}
