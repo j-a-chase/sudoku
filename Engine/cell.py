@@ -36,21 +36,21 @@ class Cell:
 
     def get_val(self) -> int:
         '''
-        Getter for private attribute {_val}
+        Getter for private attribute {__val}
 
         Parameters: None
 
         Returns:
-            - an integer containing the value stored in {_val}
+            - an integer containing the value stored in {__val}
         '''
-        return self._val
+        return self.__val
 
     def set_val(self, val: int) -> bool:
         '''
-        Setter for private attribute {_val}
+        Setter for private attribute {__val}
 
         Parameters:
-            - val: an integer indicating the value to be set to {_val}
+            - val: an integer indicating the value to be set to {__val}
 
         Returns:
             - a boolean indicating the success of the operation
@@ -62,7 +62,7 @@ class Cell:
         if val < 0 or val > 9: return False
 
         # update val
-        self._val = val
+        self.__val = val
 
         # indicate success
         return True
