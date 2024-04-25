@@ -9,7 +9,7 @@
 ################################################################################
 
 # imports
-from .cell import Cell
+from cell import Cell
 
 from random import randint
 from typing import List, Tuple
@@ -74,9 +74,9 @@ class Puzzle:
             # iterate by columns, then rows
             for i in range(9):
                 for j in range(9):
-                    if board[i][j].get_val() == 0: return (i, j)
+                    if board[i][j].get_val() == 0: return i, j
             
-            return (None, None)
+            return None, None
         
         def solve(board: List[List[Cell]]) -> bool:
             '''
@@ -123,7 +123,10 @@ class Puzzle:
 
         # populate the diagonal with random numbers
         for i in range(9):
-            new_board[i][i].set_val(randint(1, 9))
+            num = randint(1, 9)
+            while not is_valid(new_board, i, i, num):
+                num = randint(1, 9)
+            new_board[i][i].set_val(num)
 
         solve(new_board)
         self.board = new_board
