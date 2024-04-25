@@ -57,11 +57,17 @@ class Engine:
 
         # game variables
         self.paused = None
+        self.menu_state = None
 
-        # menu buttons
+        # MENU BUTTONS
+
+        # menu main
         self.menu_resume = None
         self.menu_controls = None
         self.menu_quit = None
+
+        # control menu
+        self.controls_back = None
 
         # run setup
         self.__setup()
@@ -91,6 +97,7 @@ class Engine:
 
         # initialize game variables
         self.paused = False
+        self.menu_state = 'main'
 
         # create menu button instances
         self.menu_resume = Button(WINDOW_WIDTH // 2, OFFSET, "RESUME",
@@ -99,6 +106,9 @@ class Engine:
                                     self.tooltips_font, BLACK, 1, 25)
         self.menu_quit = Button(WINDOW_WIDTH // 2, OFFSET * 3, "QUIT",
                                 self.tooltips_font, BLACK, 1, 25)
+        
+        self.controls_back = Button(WINDOW_WIDTH // 2, WINDOW_HEIGHT - (OFFSET * 4), "Back",
+                                    self.tooltips_font, BLACK, 1, 25)
 
     def __draw_game(self) -> None:
         '''
@@ -232,12 +242,22 @@ class Engine:
             # otherwise handle paused events
             else:
                 self.window.fill(FAINT_GRAY)
-                if self.menu_resume.draw(self.window, WHITE, BLACK):
-                    self.paused = False
-                if self.menu_controls.draw(self.window, WHITE, BLACK):
-                    pass
-                if self.menu_quit.draw(self.window, WHITE, BLACK):
-                    run = False
+                if self.menu_state == 'main':
+                    if self.menu_resume.draw(self.window, WHITE, BLACK):
+                        self.paused = False
+                    if self.menu_controls.draw(self.window, WHITE, BLACK):
+                        self.menu_state = 'controls'
+                    if self.menu_quit.draw(self.window, WHITE, BLACK):
+                        run = False
+                else:
+                    # draw controls text
+                    self.__draw_text("Q - Quit", BLACK, GRID_SQAURE_SIZE // 2 - OFFSET, OFFSET)
+                    self.__draw_text("N - New Board", BLACK, GRID_SQAURE_SIZE // 2 - OFFSET, OFFSET * 2)
+                    self.__draw_text("R - Reset", BLACK, GRID_SQAURE_SIZE // 2 - OFFSET, OFFSET * 3)
+                    self.__draw_text("B - Blank Board", BLACK, GRID_SQAURE_SIZE // 2 - OFFSET, OFFSET * 4)
+
+                    if self.controls_back.draw(self.window, WHITE, BLACK):
+                        self.menu_state = 'main'
                 display.flip()
             
             for event in pygame.event.get():
