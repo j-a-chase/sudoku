@@ -10,6 +10,7 @@
 
 # imports
 from .puzzle import Puzzle
+from .button import Button
 from .colors import *
 
 import pygame
@@ -46,15 +47,19 @@ class Engine:
 
         Returns: None
         '''
-        # initialize
+        # window and backend game grid representation
         self.window = None
         self.grid = None
 
+        # fonts
         self.game_font = None
-        self.menu_font = None
-        
-        self.menu = None
-        self.labels = None
+        self.tooltips_font = None
+
+        # game variables
+        self.paused = None
+
+        # menu buttons
+        self.menu_controls = None
 
         # run setup
         self.__setup()
@@ -76,12 +81,7 @@ class Engine:
 
         # setup fonts
         self.game_font = pygame.font.SysFont("timesnewroman", 40)
-        self.menu_font = pygame.font.SysFont("timesnewroman", OFFSET // 2)
-
-        # setup menu options
-        self.labels = {
-            'File': [self.__open_file_menu]
-        }
+        self.tooltips_font = pygame.font.SysFont("timesnewroman", OFFSET // 2)
 
         # initialize window
         self.window = display.set_mode([WINDOW_WIDTH, WINDOW_HEIGHT])
@@ -90,23 +90,29 @@ class Engine:
         # set window caption
         display.set_caption("Sudoku")
 
-    def __draw_game(self) -> pygame.Rect:
+        # initialize game variables
+        self.paused = False
+
+        # create menu button instances
+        self.menu_controls = Button(GRID_SQAURE_SIZE // 2, OFFSET, "CONTROLS",
+                                    self.tooltips_font, BLACK, 1, 25)
+
+    def __draw_game(self) -> None:
         '''
         Handles drawing all of the game elements in a single function.
 
         Parameters: None
 
-        Returns:
-            - the menu Rect object from the draw_menu function
+        Returns: None
         '''
-        # draw functions
+        # draw game grid and cell values
         self.__draw_grid()
-        menu = self.__draw_menu()
+
+        # draw menu tooltip
+        self.__draw_text("Press SPACE to open menu", BLACK, OFFSET, OFFSET // 6)
 
         # apply window changes
         display.flip()
-
-        return menu
 
     def __draw_grid(self) -> None:
         '''
@@ -187,37 +193,21 @@ class Engine:
                     )
                     self.window.blit(text, rect)
 
-    def __draw_menu(self) -> pygame.Rect:
+    def __draw_text(self, text: str, color: Tuple[int, int, int],
+                    x: int, y: int) -> None:
         '''
         Handles drawing the game menu
 
-        Parameters: None
-
-        Returns:
-            - the menu Rect object
-        '''
-        # create menu dimensions and draw the menu
-        menu_bar = pygame.Rect(0, 0, WINDOW_WIDTH, OFFSET)
-        pygame.draw.rect(self.window, RED, menu_bar)
-
-        # position menu labels
-        label_name = 'File'
-        label = self.menu_font.render(label_name, True, BLACK)
-        label_rect = label.get_rect(topleft=(OFFSET // 3, OFFSET // 6))
-        self.labels[label_name].append(label_rect)
-        self.window.blit(label, label_rect)
-
-        return menu_bar
-    
-    def __open_file_menu(self) -> None:
-        '''
-        Opens the file menu drop down
-
-        Parameters: None
+        Parameters:
+            - text: a string containing the text to be drawn
+            - color: the color the text should be drawn as
+            - x: the x-position of where the text should be rendered
+            - y: the y-position of where the text should be rendered
 
         Returns: None
         '''
-        print("File menu clicked!")
+        img = self.tooltips_font.render(text, True, color)
+        self.window.blit(img, (x, y))
     
     def run(self) -> None:
         '''
@@ -227,35 +217,32 @@ class Engine:
 
         Returns: None
         '''
-        # draw game, store rectangles for collision detection
-        self.menu = self.__draw_game()
+        # draw game elements
+        self.__draw_game()
 
         # run game
         run = True
         while run:
+            # handle events while paused
+            if self.paused:
+                self.window.fill(FAINT_GRAY)
+                self.menu_controls.draw(self.window, WHITE, BLACK)
+                display.flip()
             for event in pygame.event.get():
-                # grab current mouse position for mousebuttondown events
-                mouse = pygame.mouse.get_pos()
-
                 # handle keypresses
                 if event.type == pygame.KEYDOWN:
                     # quit game is 'esc' or 'q' is pressed
                     if event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
                         run = False
 
+                    # check for menu option
+                    elif event.key == pygame.K_SPACE:
+                        self.paused = True
+
                 # handle if user clicks the topright 'X'
                 elif event.type == pygame.QUIT:
                     run = False
-                
-                # handle mousebuttondown events
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    # if click was in the menu
-                    if self.menu.collidepoint(mouse):
-                        # iterate through label collisions to determine if and
-                        # what label was hit
-                        for label in self.labels:
-                            if self.labels[label][RECTANGLE_INDEX].collidepoint(mouse):
-                                self.labels[label][FUNCTION_INDEX]()
+        
         pygame.quit()
 
 if __name__ == '__main__':
