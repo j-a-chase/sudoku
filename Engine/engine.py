@@ -82,7 +82,7 @@ class Engine:
         while run:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
+                    if event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
                         run = False
                 elif event.type == pygame.QUIT:
                     run = False
