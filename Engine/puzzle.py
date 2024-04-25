@@ -26,15 +26,19 @@ class Puzzle:
         # initialize our sudoku board
         self.board = None
 
-    def generate_puzzle(self) -> None:
+    def generate_puzzle(self, difficulty: int=65) -> None:
         '''
         Function to generate a sudoku puzzle.
 
-        Parameters: None
+        Parameters:
+            - difficulty: an integer indicating how many blank cells to start
+                            with, which typically indicates how difficult the
+                            puzzle will be
 
         Returns: None
         '''
-        def is_valid(board: List[List[Cell]], row: int, col: int, val: int) -> bool:
+        def is_valid(board: List[List[Cell]], row: int, col: int,
+                     val: int) -> bool:
             '''
             Helper function to determine if number is valid.
 
@@ -51,7 +55,8 @@ class Puzzle:
             '''
             # check row and column
             for i in range(9):
-                if board[row][i].get_val() == val or board[i][col].get_val() == val: return False
+                if (board[row][i].get_val() == val
+                    or board[i][col].get_val() == val): return False
             
             # check subgrid
             subrow, subcol = (row // 3) * 3, (col // 3) * 3
@@ -129,6 +134,13 @@ class Puzzle:
             new_board[i][i].set_val(num)
 
         solve(new_board)
+
+        for i in range(difficulty):
+            row, col = randint(0, 8), randint(0, 8)
+            while new_board[row][col].get_val() == 0:
+                row, col = randint(0, 8), randint(0, 8)
+            new_board[row][col].set_val(0)
+
         self.board = new_board
 
 if __name__ == '__main__':
