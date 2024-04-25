@@ -9,6 +9,8 @@
 ################################################################################
 
 # imports
+from .puzzle import Puzzle
+
 import pygame
 from pygame import display
 from .colors import *
@@ -21,6 +23,7 @@ WINDOW_HEIGHT = 1000
 
 # game size and positioning
 GRID_SQAURE_SIZE = 864
+CELL_SIZE = GRID_SQAURE_SIZE // 9
 OFFSET = (WINDOW_WIDTH - GRID_SQAURE_SIZE) // 2
 
 # line sizes
@@ -38,7 +41,12 @@ class Engine:
 
         Returns: None
         '''
+        # initialize
         self.window = None
+        self.grid = None
+        self.game_font = None
+
+        # run setup
         self.__setup()
         
     def __setup(self) -> None:
@@ -52,15 +60,22 @@ class Engine:
         # initialize pygame resources
         pygame.init()
 
+        # initialize game board
+        self.grid = Puzzle()
+        self.grid.generate_puzzle()
+
+        # setup fonts
+        self.game_font = pygame.font.SysFont("timesnewroman", 40)
+
         # initialize window
         self.window = display.set_mode([WINDOW_WIDTH, WINDOW_HEIGHT])
         self.window.fill(WHITE)
 
-        # draw game grid
-        self.draw_grid()
-
         # set window caption
         display.set_caption("Sudoku")
+
+        # draw game grid
+        self.draw_grid()
 
         # debug loop
         run = True
@@ -81,6 +96,20 @@ class Engine:
 
         Returns: None
         '''
+        # CELL BACKGROUNDS
+
+        for row in range(9):
+            for col in range(9):
+                if self.grid.board[row][col].get_val() == 0:
+                    color = LIGHT_GRAY
+                else:
+                    color = DARK_GRAY
+                pygame.draw.rect(self.window, color, 
+                                 ((col * CELL_SIZE) + OFFSET,
+                                  (row * CELL_SIZE) + OFFSET,
+                                  CELL_SIZE,
+                                  CELL_SIZE))
+
         # GAME BOX LINES
 
         # top line
@@ -114,13 +143,29 @@ class Engine:
             # we need a thick line every third line in the eight we're drawing
             line = THICK_GRID_LINE if (i+1) % 3 == 0 else THIN_GRID_LINE
             pygame.draw.line(self.window, BLACK,
-                             ((i+1) * (GRID_SQAURE_SIZE // 9) + OFFSET, OFFSET),
-                             ((i+1) * (GRID_SQAURE_SIZE // 9) + OFFSET, WINDOW_HEIGHT - OFFSET),
+                             ((i+1) * (CELL_SIZE) + OFFSET, OFFSET),
+                             ((i+1) * (CELL_SIZE) + OFFSET, WINDOW_HEIGHT - OFFSET),
                              line)
             pygame.draw.line(self.window, BLACK,
-                             (OFFSET, (i+1) * (GRID_SQAURE_SIZE // 9) + OFFSET),
-                             (WINDOW_WIDTH - OFFSET, (i+1) * (GRID_SQAURE_SIZE // 9) + OFFSET),
+                             (OFFSET, (i+1) * (CELL_SIZE) + OFFSET),
+                             (WINDOW_WIDTH - OFFSET, (i+1) * (CELL_SIZE) + OFFSET),
                              line)
+            
+        # GRID VALUES
+        
+        for row in range(9):
+            for col in range(9):
+                if self.grid.board[row][col].get_val() != 0:
+                    text = self.game_font.render(
+                        str(self.grid.board[row][col].get_val()),
+                        True,
+                        BLUE
+                    )
+                    rect = text.get_rect(
+                        center=((col * CELL_SIZE) + OFFSET + (CELL_SIZE // 2),
+                                (row * CELL_SIZE) + OFFSET + (CELL_SIZE // 2))
+                    )
+                    self.window.blit(text, rect)
 
         # apply window changes
         display.flip()
