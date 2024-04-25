@@ -75,7 +75,7 @@ class Engine:
         display.set_caption("Sudoku")
 
         # draw game grid
-        self.draw_grid()
+        self.__draw_grid()
 
         # debug loop
         run = True
@@ -88,7 +88,7 @@ class Engine:
                     run = False
         pygame.quit()
 
-    def draw_grid(self) -> None:
+    def __draw_grid(self) -> None:
         '''
         Draws the lines for the sudoku grid
 
@@ -152,7 +152,7 @@ class Engine:
                              line)
             
         # GRID VALUES
-        
+
         for row in range(9):
             for col in range(9):
                 if self.grid.board[row][col].get_val() != 0:
