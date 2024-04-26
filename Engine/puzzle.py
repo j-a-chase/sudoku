@@ -10,10 +10,9 @@
 
 # imports
 from .cell import Cell
-from .lib import is_valid
+from .lib import is_valid, solve
 
 from random import randint
-from typing import List, Tuple
 from copy import deepcopy
 
 class Puzzle:
@@ -40,63 +39,6 @@ class Puzzle:
 
         Returns: None
         '''
-        def find_empty(board: List[List[Cell]]) -> Tuple[int, int]:
-            '''
-            Helper function to find the next empty cell.
-
-            Parameters:
-                - board: a list of list of cells representing a sudoku grid
-
-            Returns:
-                - a tuple containing the coordinates for the next empty cell
-            '''
-            # iterate by columns, then rows
-            for i in range(9):
-                for j in range(9):
-                    if board[i][j].get_val() == 0: return i, j
-            
-            return None, None
-        
-        def solve(board: List[List[Cell]]) -> bool:
-            '''
-            Helper function to very basically solve a given sudoku grid.
-
-            Parameters:
-                - board: a list of list of cells representing a sudoku grid
-
-            Returns:
-                - a boolean indicating if the grid has been solved
-            '''
-            # solve grid using a stack
-            stack = []
-
-            # push first Cell onto the stack
-            stack.append(find_empty(board))
-
-            while stack:
-                # get next empty cell
-                row, col = stack[-1]
-
-                # check if grid is solved (no empty cells)
-                if row is None: return True
-
-                # start with num = 1
-                num = board[row][col].get_val() + 1
-
-                # find a valid value and keep going through the stack
-                valid = False
-                while num < 10:
-                    if is_valid(board, row, col, num):
-                        board[row][col].set_val(num)
-                        stack.append(find_empty(board))
-                        valid = True
-                        break
-                    num += 1
-                if not valid:
-                    board[row][col].set_val(0)
-                    stack.pop()
-            return False
-
         # generate a new blank board
         new_board = [[Cell() for _ in range(9)] for _ in range(9)]
 
