@@ -10,9 +10,11 @@
 
 # imports
 from .cell import Cell
+from .lib import is_valid
 
 from random import randint
 from typing import List, Tuple
+from copy import deepcopy
 
 class Puzzle:
     def __init__(self) -> None:
@@ -25,6 +27,7 @@ class Puzzle:
         '''
         # initialize our sudoku board
         self.board = None
+        self.solved_board = None
 
     def generate_puzzle(self, difficulty: int=65) -> None:
         '''
@@ -37,35 +40,6 @@ class Puzzle:
 
         Returns: None
         '''
-        def is_valid(board: List[List[Cell]], row: int, col: int,
-                     val: int) -> bool:
-            '''
-            Helper function to determine if number is valid.
-
-            Parameters:
-                - board: a list of list of cells representing a sudoku grid
-                - row: an integer representing the row where the move is taking
-                        place
-                - col: an integer representing the column where the move is
-                        taking place
-                - val: the value to be tested
-
-            Returns:
-                - a boolean if the attempted value is valid or not
-            '''
-            # check row and column
-            for i in range(9):
-                if (board[row][i].get_val() == val
-                    or board[i][col].get_val() == val): return False
-            
-            # check subgrid
-            subrow, subcol = (row // 3) * 3, (col // 3) * 3
-            for i in range(subrow, subrow + 3):
-                for j in range(subcol, subcol + 3):
-                    if board[i][j].get_val() == val: return False
-
-            return True
-        
         def find_empty(board: List[List[Cell]]) -> Tuple[int, int]:
             '''
             Helper function to find the next empty cell.
@@ -135,6 +109,8 @@ class Puzzle:
 
         # solve board
         solve(new_board)
+
+        self.solved_board = deepcopy(new_board)
 
         # remove squares to create puzzle (more usually means more difficult)
         for i in range(difficulty):
