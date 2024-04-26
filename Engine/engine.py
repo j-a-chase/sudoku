@@ -12,6 +12,7 @@
 from .puzzle import Puzzle
 from .button import Button
 from .colors import *
+from .lib import is_valid
 
 import pygame
 from pygame import display
@@ -290,15 +291,44 @@ class Engine:
                 if event.type == pygame.KEYDOWN:
                     if not self.paused:
                         x, y = self.cursor_pos
+
                         # handle arrow key movement
                         if event.key == pygame.K_UP and y > 0:
                             self.cursor_pos = (x, y-1)
-                        elif event.key == pygame.K_DOWN and y < 8:
+                            continue
+                        if event.key == pygame.K_DOWN and y < 8:
                             self.cursor_pos = (x, y+1)
-                        elif event.key == pygame.K_LEFT and x > 0:
+                            continue
+                        if event.key == pygame.K_LEFT and x > 0:
                             self.cursor_pos = (x-1, y)
-                        elif event.key == pygame.K_RIGHT and x < 8:
+                            continue
+                        if event.key == pygame.K_RIGHT and x < 8:
                             self.cursor_pos = (x+1, y)
+                            continue
+
+                        # handle numeric input
+                        elif event.key == pygame.K_1:
+                            self.grid.board[y][x].set_val(1)
+                        elif event.key == pygame.K_2:
+                            self.grid.board[y][x].set_val(2)
+                        elif event.key == pygame.K_3:
+                            self.grid.board[y][x].set_val(3)
+                        elif event.key == pygame.K_4:
+                            self.grid.board[y][x].set_val(4)
+                        elif event.key == pygame.K_5:
+                            self.grid.board[y][x].set_val(5)
+                        elif event.key == pygame.K_6:
+                            self.grid.board[y][x].set_val(6)
+                        elif event.key == pygame.K_7:
+                            self.grid.board[y][x].set_val(7)
+                        elif event.key == pygame.K_8:
+                            self.grid.board[y][x].set_val(8)
+                        elif event.key == pygame.K_9:
+                            self.grid.board[y][x].set_val(9)
+
+                        if self.grid.board[y][x].get_val() != self.grid.solved_board[y][x].get_val():
+                            print("ERROR! INVALID INPUT")
+                            self.grid.board[y][x].set_val(0)
                         
                     # quit game is 'esc' or 'q' is pressed
                     if event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
