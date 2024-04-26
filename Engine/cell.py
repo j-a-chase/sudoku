@@ -9,18 +9,22 @@
 ################################################################################
 
 class Cell:
-    def __init__(self, val: int=0) -> None:
+    def __init__(self, val: int=0, is_locked: bool=False) -> None:
         '''
         Constructor
 
         Parameters:
             - val: an integer indicating the value of the cell [1-9]
+            - is_locked: a boolean value indicating if the cell should be locked
+                         or not
 
         Returns: None
         '''
         assert type(val) == int
+        assert type(is_locked) == bool
         assert 0 <= val <= 9
 
+        self.is_locked = is_locked
         self.set_val(val)
 
     def __str__(self) -> str:
@@ -32,25 +36,25 @@ class Cell:
         Returns:
             - a string representation of the object
         '''
-        return f'Cell<val: {self.get_val()}'
+        return f'Cell<val: {self.get_val()}, is_locked: {self.is_locked}>'
 
     def get_val(self) -> int:
         '''
-        Getter for private attribute {__val}
+        Getter for private attribute {val}
 
         Parameters: None
 
         Returns:
-            - an integer containing the value stored in {__val}
+            - an integer containing the value stored in {val}
         '''
         return self.__val
 
     def set_val(self, val: int) -> bool:
         '''
-        Setter for private attribute {__val}
+        Setter for private attribute {val}
 
         Parameters:
-            - val: an integer indicating the value to be set to {__val}
+            - val: an integer indicating the value to be set to {val}
 
         Returns:
             - a boolean indicating the success of the operation
@@ -60,6 +64,9 @@ class Cell:
 
         # verify input is in correct bounds, indicate failure if not
         if val < 0 or val > 9: return False
+
+        # indicate failure if cell is locked
+        if self.is_locked: return False
 
         # update val
         self.__val = val

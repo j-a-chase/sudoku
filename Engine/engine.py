@@ -146,6 +146,8 @@ class Engine:
             for col in range(9):
                 if self.grid.board[row][col].get_val() == 0:
                     color = LIGHT_GRAY
+                elif self.grid.board[row][col].is_locked:
+                    color = DARKER_GRAY
                 else:
                     color = DARK_GRAY
                 pygame.draw.rect(self.window, color, 
@@ -200,10 +202,11 @@ class Engine:
         for row in range(9):
             for col in range(9):
                 if self.grid.board[row][col].get_val() != 0:
+                    color = AQUA if self.grid.board[row][col].is_locked else BLUE
                     text = self.game_font.render(
                         str(self.grid.board[row][col].get_val()),
                         True,
-                        BLUE
+                        color
                     )
                     rect = text.get_rect(
                         center=((col * CELL_SIZE) + OFFSET + (CELL_SIZE // 2),

@@ -133,13 +133,21 @@ class Puzzle:
                 num = randint(1, 9)
             new_board[i][i].set_val(num)
 
+        # solve board
         solve(new_board)
 
+        # remove squares to create puzzle (more usually means more difficult)
         for i in range(difficulty):
             row, col = randint(0, 8), randint(0, 8)
             while new_board[row][col].get_val() == 0:
                 row, col = randint(0, 8), randint(0, 8)
             new_board[row][col].set_val(0)
+
+        # lock cells with a starting value
+        for row in range(9):
+            for col in range(9):
+                if new_board[row][col].get_val() != 0:
+                    new_board[row][col].is_locked = True
 
         self.board = new_board
 
