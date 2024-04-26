@@ -147,7 +147,7 @@ class Puzzle:
         for row in range(9):
             for col in range(9):
                 if new_board[row][col].get_val() != 0:
-                    new_board[row][col].is_locked = True
+                    new_board[row][col].set_locked(True)
 
         self.board = new_board
 
