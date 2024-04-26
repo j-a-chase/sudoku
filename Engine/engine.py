@@ -58,6 +58,7 @@ class Engine:
         # game variables
         self.paused = None
         self.menu_state = None
+        self.cursor_pos = None
 
         # MENU BUTTONS
 
@@ -98,6 +99,7 @@ class Engine:
         # initialize game variables
         self.paused = False
         self.menu_state = 'main'
+        self.cursor_pos = (4, 4)
 
         # create menu button instances
         self.menu_resume = Button(WINDOW_WIDTH // 2, OFFSET, "RESUME",
@@ -185,12 +187,12 @@ class Engine:
             # we need a thick line every third line in the eight we're drawing
             line = THICK_GRID_LINE if (i+1) % 3 == 0 else THIN_GRID_LINE
             pygame.draw.line(self.window, BLACK,
-                             ((i+1) * (CELL_SIZE) + OFFSET, OFFSET),
-                             ((i+1) * (CELL_SIZE) + OFFSET, WINDOW_HEIGHT - OFFSET),
+                             ((i+1) * CELL_SIZE + OFFSET, OFFSET),
+                             ((i+1) * CELL_SIZE + OFFSET, WINDOW_HEIGHT - OFFSET),
                              line)
             pygame.draw.line(self.window, BLACK,
-                             (OFFSET, (i+1) * (CELL_SIZE) + OFFSET),
-                             (WINDOW_WIDTH - OFFSET, (i+1) * (CELL_SIZE) + OFFSET),
+                             (OFFSET, (i+1) * CELL_SIZE + OFFSET),
+                             (WINDOW_WIDTH - OFFSET, (i+1) * CELL_SIZE + OFFSET),
                              line)
             
         # GRID VALUES
@@ -208,6 +210,26 @@ class Engine:
                                 (row * CELL_SIZE) + OFFSET + (CELL_SIZE // 2))
                     )
                     self.window.blit(text, rect)
+
+        # CURSOR POSITION
+        x, y = self.cursor_pos
+
+        pygame.draw.line(self.window, GREEN,
+                         ((x) * CELL_SIZE + OFFSET, (y) * CELL_SIZE + OFFSET),
+                         ((x) * CELL_SIZE + OFFSET, (y + 1) * CELL_SIZE + OFFSET),
+                         THICK_GRID_LINE)
+        pygame.draw.line(self.window, GREEN,
+                         ((x + 1) * CELL_SIZE + OFFSET, (y) * CELL_SIZE + OFFSET),
+                         ((x + 1) * CELL_SIZE + OFFSET, (y + 1) * CELL_SIZE + OFFSET),
+                         THICK_GRID_LINE)
+        pygame.draw.line(self.window, GREEN,
+                         ((x) * CELL_SIZE + OFFSET, (y) * CELL_SIZE + OFFSET),
+                         ((x + 1) * CELL_SIZE + OFFSET, (y) * CELL_SIZE + OFFSET),
+                         THICK_GRID_LINE)
+        pygame.draw.line(self.window, GREEN,
+                         ((x) * CELL_SIZE + OFFSET, (y + 1) * CELL_SIZE + OFFSET),
+                         ((x + 1) * CELL_SIZE + OFFSET, (y + 1) * CELL_SIZE + OFFSET),
+                         THICK_GRID_LINE)
 
     def __draw_text(self, text: str, color: Tuple[int, int, int],
                     x: int, y: int) -> None:
@@ -263,6 +285,18 @@ class Engine:
             for event in pygame.event.get():
                 # handle keypresses
                 if event.type == pygame.KEYDOWN:
+                    if not self.paused:
+                        x, y = self.cursor_pos
+                        # handle arrow key movement
+                        if event.key == pygame.K_UP and y > 0:
+                            self.cursor_pos = (x, y-1)
+                        elif event.key == pygame.K_DOWN and y < 8:
+                            self.cursor_pos = (x, y+1)
+                        elif event.key == pygame.K_LEFT and x > 0:
+                            self.cursor_pos = (x-1, y)
+                        elif event.key == pygame.K_RIGHT and x < 8:
+                            self.cursor_pos = (x+1, y)
+                        
                     # quit game is 'esc' or 'q' is pressed
                     if event.key == pygame.K_ESCAPE or event.key == pygame.K_q:
                         run = False
