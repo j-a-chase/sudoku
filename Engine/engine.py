@@ -60,6 +60,7 @@ class Engine:
         self.paused = None
         self.menu_state = None
         self.cursor_pos = None
+        self.error_flag = None
 
         # MENU BUTTONS
 
@@ -101,6 +102,7 @@ class Engine:
         self.paused = False
         self.menu_state = 'main'
         self.cursor_pos = (4, 4)
+        self.error_flag = False
 
         # create menu button instances
         self.menu_resume = Button(WINDOW_WIDTH // 2, OFFSET, "RESUME",
@@ -129,6 +131,10 @@ class Engine:
 
         # draw menu tooltip
         self.__draw_text("Press SPACE to open menu", BLACK, OFFSET, OFFSET // 6)
+
+        # error text if error flag is triggered
+        if self.error_flag:
+            self.__draw_text("WRONG!!!", RED, OFFSET, WINDOW_HEIGHT - OFFSET)
 
         # apply window changes
         display.flip()
@@ -289,6 +295,7 @@ class Engine:
             for event in pygame.event.get():
                 # handle keypresses
                 if event.type == pygame.KEYDOWN:
+                    self.error_flag = False
                     if not self.paused:
                         x, y = self.cursor_pos
 
@@ -327,7 +334,7 @@ class Engine:
                             self.grid.board[y][x].set_val(9)
 
                         if self.grid.board[y][x].get_val() != self.grid.solved_board[y][x].get_val():
-                            print("ERROR! INVALID INPUT")
+                            self.error_flag = True
                             self.grid.board[y][x].set_val(0)
                         
                     # quit game is 'esc' or 'q' is pressed
