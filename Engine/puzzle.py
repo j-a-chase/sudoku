@@ -69,5 +69,20 @@ class Puzzle:
 
         self.board = new_board
 
+    def is_win(self) -> bool:
+        '''
+        Function to check for a win between boards
+
+        Parameters: None
+
+        Returns:
+            - a boolean indicating if a win has been achieved
+        '''
+        for row in range(9):
+            for col in range(9):
+                if self.board[row][col].get_val() != self.solved_board[row][col].get_val():
+                    return False
+        return True
+
 if __name__ == '__main__':
     assert False, 'This is a class file. Import its contents into another file.'

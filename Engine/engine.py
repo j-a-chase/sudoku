@@ -12,7 +12,7 @@
 from .puzzle import Puzzle
 from .button import Button
 from .colors import *
-from .lib import mouse_pos_to_grid
+from .lib import mouse_pos_to_grid, solve
 
 import pygame
 from pygame import display
@@ -314,23 +314,23 @@ class Engine:
                             continue
 
                         # handle numeric input
-                        elif event.key == pygame.K_1:
+                        elif event.key == pygame.K_1 or event.key == pygame.K_KP1:
                             self.grid.board[y][x].set_val(1)
-                        elif event.key == pygame.K_2:
+                        elif event.key == pygame.K_2 or event.key == pygame.K_KP2:
                             self.grid.board[y][x].set_val(2)
-                        elif event.key == pygame.K_3:
+                        elif event.key == pygame.K_3 or event.key == pygame.K_KP3:
                             self.grid.board[y][x].set_val(3)
-                        elif event.key == pygame.K_4:
+                        elif event.key == pygame.K_4 or event.key == pygame.K_KP4:
                             self.grid.board[y][x].set_val(4)
-                        elif event.key == pygame.K_5:
+                        elif event.key == pygame.K_5 or event.key == pygame.K_KP5:
                             self.grid.board[y][x].set_val(5)
-                        elif event.key == pygame.K_6:
+                        elif event.key == pygame.K_6 or event.key == pygame.K_KP6:
                             self.grid.board[y][x].set_val(6)
-                        elif event.key == pygame.K_7:
+                        elif event.key == pygame.K_7 or event.key == pygame.K_KP7:
                             self.grid.board[y][x].set_val(7)
-                        elif event.key == pygame.K_8:
+                        elif event.key == pygame.K_8 or event.key == pygame.K_KP8:
                             self.grid.board[y][x].set_val(8)
-                        elif event.key == pygame.K_9:
+                        elif event.key == pygame.K_9 or event.key == pygame.K_KP9:
                             self.grid.board[y][x].set_val(9)
 
                         if self.grid.board[y][x].get_val() != self.grid.solved_board[y][x].get_val():
@@ -362,6 +362,10 @@ class Engine:
                 # handle if user clicks the topright 'X'
                 elif event.type == pygame.QUIT:
                     run = False
+            
+            # check for win
+            if self.grid.is_win():
+                print("You Win!")
         
         pygame.quit()
 
