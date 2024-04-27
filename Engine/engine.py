@@ -12,11 +12,11 @@
 from .puzzle import Puzzle
 from .button import Button
 from .colors import *
-from .lib import is_valid
+from .lib import mouse_pos_to_grid
 
 import pygame
 from pygame import display
-from typing import Tuple, List
+from typing import Tuple
 
 # constants
 
@@ -348,6 +348,17 @@ class Engine:
                         else:
                             self.paused = False
 
+                # handle if user clicks on the grid
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    click_pos = mouse_pos_to_grid(
+                        pygame.mouse.get_pos(),
+                        GRID_SQAURE_SIZE,
+                        OFFSET,
+                        CELL_SIZE
+                    )
+                    if click_pos:
+                        self.cursor_pos = click_pos
+                
                 # handle if user clicks the topright 'X'
                 elif event.type == pygame.QUIT:
                     run = False
